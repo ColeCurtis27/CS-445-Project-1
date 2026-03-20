@@ -1,51 +1,38 @@
-# Simple workflow for deploying static content to GitHub Pages
 name: Deploy static content to Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
-    branches: ['main']
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow one concurrent deployment
-concurrency:
-  group: 'pages'
-  cancel-in-progress: true
+    branches:
+      - main
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-      - name: Set up Node
-        uses: actions/setup-node@v6
+      # 1️⃣ Checkout your repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: lts/*
-          cache: 'npm'
+          node-version: 20
+
+      # 3️⃣ Install dependencies (in the nested folder)
       - name: Install dependencies
         run: npm ci
+        working-directory: ./CS-445-Project-1
+
+      # 4️⃣ Build the project
       - name: Build
         run: npm run build
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          # Upload dist folder
-          path: './dist'
+        working-directory: ./CS-445-Project-1
+
+      # 5️⃣ Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: peaceiris/actions-gh-pages@v7
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./CS-445-Project-1/dist
