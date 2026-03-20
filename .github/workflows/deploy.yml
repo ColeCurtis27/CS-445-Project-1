@@ -5,27 +5,30 @@ on:
     branches:
       - main
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # Use Node.js 24 for all actions
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the repository
+      # 1. Checkout the repo
       - name: Checkout
         uses: actions/checkout@v3
 
-      # 2. Setup Node.js
+      # 2. Setup Node.js 24
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '24'
 
-      # 3. Install dependencies (in the subfolder)
+      # 3. Install dependencies in the subfolder
       - name: Install dependencies
         run: npm ci
         working-directory: ./cs445project1
 
-      # 4. Build the project (in the subfolder)
+      # 4. Build the project
       - name: Build
         run: npm run build
         working-directory: ./cs445project1
@@ -37,3 +40,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./cs445project1/dist
           publish_branch: gh-pages
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
