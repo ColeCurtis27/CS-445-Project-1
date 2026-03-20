@@ -47,7 +47,7 @@ function goToPage(pageName) {
         v-for="(bottle, index) in bottles"
         :key="index"
         src="/bottle.png"
-        width="60"
+        width="59"
       />
     </div>
   </div>
